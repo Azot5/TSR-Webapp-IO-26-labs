@@ -1,0 +1,10 @@
+tqdm
+config_reader
+fastapi
+sqlalchemy
+passlib
+PyJWT
+fastapi
+uvicorn[standard]
+jinja2
+python-multipart

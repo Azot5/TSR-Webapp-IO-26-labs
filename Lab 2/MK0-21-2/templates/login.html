@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Логін - Тестова система електронноо чергування з використанням FastAPI </title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #4CAF50;
+      padding: 10px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .container {
+      width: 30%;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input {
+      width: 95%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+
+      .btn:hover {
+        background-color: #45a049;
+      }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Тестова система електронноо чергування з використанням FastAPI </h1>
+  </header>
+
+  <div class="container">
+    <h2>Увійти</h2>
+    <form id="loginForm">
+      <input type="text" id="username" name="username" placeholder="Введіть ім'я користувача" required>
+      <input type="password" id="password" name="password" placeholder="Введіть пароль" required>
+      <button type="submit" class="btn">Увійти</button>
+    </form>
+
+    <div id="errorMessage" class="error" style="display:none;"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 IO-26 Zinchenko A. Lab #1 Authentication System</p>
+  </footer>
+
+  <script>
+      document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/token', {
+        method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      body: new URLSearchParams({
+        'username': username,
+      'password': password
+        })
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Невірні ім\'я користувача або пароль');
+          }
+        })
+        .then(data => {
+          if (data.access_token) {
+        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem('username', username);
+      window.location.href = '/home';
+          }
+        })
+        .catch(error => {
+        document.getElementById('errorMessage').style.display = 'block';
+      document.getElementById('errorMessage').textContent = error.message;
+        });
+    });
+  </script>
+</body>
+</html>

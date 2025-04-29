@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Кабінет користувача</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f9;
+			color: #333;
+			margin: 0;
+			padding: 0;
+		}
+
+		header {
+			background-color: #4CAF50;
+			padding: 10px 20px;
+			text-align: center;
+			color: white;
+		}
+
+		.container {
+			width: 30%;
+			margin: 50px auto;
+			padding: 20px;
+			background-color: white;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		h1 {
+			text-align: center;
+			color: white;
+		}
+
+		p {
+			font-size: 18px;
+			text-align: center;
+		}
+
+		.btn1 {
+			display: inline-block;
+			padding: 10px;
+			background-color: #388E3C;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 1.1em;
+		}
+
+		.btn {
+			width: 100%;
+			padding: 10px;
+			background-color: #388E3C; 
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 1.1em;
+		}
+
+			.btn:hover {
+				background-color: #2C6E2F;
+			}
+
+		.error {
+			color: red;
+			text-align: center;
+			font-size: 0.9em;
+			margin-top: 10px;
+		}
+
+		footer {
+			background-color: #333;
+			color: white;
+			text-align: center;
+			padding: 10px;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+		}
+
+		.queue-title {
+			position: absolute;
+			top: 35px;
+			left: 20px;
+			font-size: 26px;
+			font-weight: bold;
+			color: white;
+		}
+
+		.header {
+			position: absolute;
+			top: 10px;
+			right: 20px;
+			font-size: 18px;
+			color: white;
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		#welcomeMessage {
+			color: black;
+		}
+
+		@media (max-width: 1020px) {
+			.container {
+				width: 90%;
+			}
+
+			.queue-title, .header, #welcomeMessage, .btn {
+				display: block;
+				text-align: left;
+			}
+
+			.queue-title {
+				order: 1;
+			}
+
+			.header {
+				order: 2;
+			}
+
+			#welcomeMessage {
+				order: 3;
+			}
+
+			.btn {
+				order: 4;
+			}
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Кабінет користувача</h1>
+	</header>
+
+	<div class="container">
+		<div class="queue-title">Тестова Електронна Черга</div>
+		<div class="header">
+			Ви увійшли як <strong id="username"></strong>
+			<button onclick="logout()" class="btn1">Вийти</button>
+			<button onclick="editAccount()" class="btn1" id="editAccountButton" style="margin-top: 10px;">Редагувати акаунт</button>
+		</div>
+
+		<h1 id="welcomeMessage"></h1>
+		<p>Ви успішно увійшли до свого кабінету.</p>
+
+		<p id="queueMessage">Завантаження статусу черги...</p>
+
+		<button id="joinButton" class="btn hidden">Долучитись</button>
+		<button id="leaveButton" class="btn hidden">Вийти з черги</button>
+
+		<div id="errorMessage" class="error" style="display:none;"></div>
+	</div>
+
+	<footer>
+		<p>&copy; 2025 IO-26 Zinchenko A. Lab #1 Authentication System</p>
+	</footer>
+
+	<script>
+		window.onload = function () {
+			const token = localStorage.getItem('access_token');
+			const username = localStorage.getItem('username');
+
+			if (username) {
+				document.getElementById('username').textContent = username;
+				document.getElementById('welcomeMessage').innerText = `Ласкаво просимо, ${username}!`;
+			}
+
+			if (token) {
+				fetch('/queue/position', {
+					method: 'GET',
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
+					.then(response => {
+						if (response.status === 204) {
+							document.getElementById('queueMessage').innerText = 'Ви знаходитесь поза чергою';
+							document.getElementById('joinButton').classList.remove('hidden');
+							document.getElementById('editAccountButton').disabled = false;
+						} else {
+							return response.json();
+						}
+					})
+					.then(data => {
+						if (data && data.id) {
+							if (data.id === 1) {
+								document.getElementById('queueMessage').innerText = 'Прийшла ваша черга, пройдіть до кабінету!';
+							} else {
+								document.getElementById('queueMessage').innerText = `Ваш послідовний номер в черзі: ${data.id}`;
+							}
+							document.getElementById('joinButton').classList.add('hidden');
+							document.getElementById('leaveButton').classList.remove('hidden');
+							document.getElementById('editAccountButton').disabled = true;
+						}
+					})
+					.catch(error => console.error('Error:', error));
+			} else {
+				document.getElementById('queueMessage').innerText = 'Ви не авторизовані';
+			}
+
+			document.getElementById('joinButton').addEventListener('click', function () {
+				const token = localStorage.getItem('access_token');
+
+				if (token) {
+					fetch('/queue/add', {
+						method: 'POST',
+						headers: {
+							'Authorization': `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({})
+					})
+						.then(response => response.json().then(data => ({ status: response.status, body: data })))
+						.then(({ status, body }) => {
+							if (status === 200 && body.id) {
+								document.getElementById('queueMessage').innerText = `Ваш послідовний номер в черзі: ${body.id}`;
+								document.getElementById('joinButton').classList.add('hidden');
+								document.getElementById('leaveButton').classList.remove('hidden');
+
+								location.reload();
+							}
+						})
+						.catch(error => console.error('Error:', error));
+				}
+			});
+
+
+			document.getElementById('leaveButton').addEventListener('click', function () {
+				const confirmed = confirm("Ви впевнені, що хочете вийти з черги?");
+				if (confirmed && token) {
+					fetch('/queue/remove', {
+						method: 'POST',
+						headers: {
+							'Authorization': `Bearer ${token}`,
+							'Content-Type': 'application/json'
+						}
+					})
+						.then(response => {
+							if (response.status === 200) {
+								document.getElementById('queueMessage').innerText = 'Ви вийшли з черги';
+								document.getElementById('joinButton').classList.remove('hidden');
+								document.getElementById('leaveButton').classList.add('hidden');
+								document.getElementById('editAccountButton').disabled = false; 
+							}
+						})
+						.catch(error => console.error('Error:', error));
+				}
+			});
+		};
+
+		function logout() {
+			const confirmed = confirm("Ви впевнені, що хочете вийти?");
+			if (confirmed) {
+				localStorage.removeItem('access_token');
+				localStorage.removeItem('username');
+				window.location.href = '/';
+			}
+		}
+
+		function editAccount() {
+			window.location.href = '/edit-account-home';
+		}
+	</script>
+</body>
+</html>
