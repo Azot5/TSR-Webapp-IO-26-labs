@@ -1,0 +1,2107 @@
+{
+	"info": {
+		"_postman_id": "2fc55c3e-589d-4915-a3e9-80fcd27faf62",
+		"name": "Lab 1 MK 0-21 test 2",
+		"description": "Complete collection for testing all vaccination system endpoints with admin auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39551222"
+	},
+	"item": [
+		{
+			"name": "Basic Endpoints",
+			"item": [
+				{
+					"name": "Basic Endpoints",
+					"item": [
+						{
+							"name": "GET / - Welcome page",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /register - Register page",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /login - Login page",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User Endpoints",
+					"item": [
+						{
+							"name": "POST /register - User registration",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{user_username}}"
+										},
+										{
+											"key": "email",
+											"value": "{{user_email}}"
+										},
+										{
+											"key": "password",
+											"value": "{{user_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /token - Get JWT token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Save user token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    \r",
+											"    // Перевіряємо, чи є токен у відповіді\r",
+											"    if (jsonData.access_token) {\r",
+											"        pm.environment.set(\"user_token\", jsonData.access_token);\r",
+											"        pm.expect(pm.environment.get(\"user_token\")).to.not.be.empty;\r",
+											"        console.log(\"User token saved:\", pm.environment.get(\"user_token\"));\r",
+											"    } else {\r",
+											"        console.log(\"No access_token found in response\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{user_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{user_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/token",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /home - User home",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/home",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"home"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /user/delete-account - Self-service account deletion",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Success message present\", function() {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.eql(\"Account deleted successfully\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password",
+											"value": "{{user_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/user/delete-account",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"delete-account"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Queue Endpoints",
+					"item": [
+						{
+							"name": "GET /queue/position - Get queue position",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/position",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"position"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /queue/add - Add to queue",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/add",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /queue/remove - Remove from queue",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/remove",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"remove"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Admin Endpoints",
+					"item": [
+						{
+							"name": "POST /admin/register - Register admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/token - Get admin token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Save admin token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    \r",
+											"    // Перевіряємо, чи є токен у відповіді\r",
+											"    if (jsonData.access_token) {\r",
+											"        pm.environment.set(\"admin_token\", jsonData.access_token);\r",
+											"        pm.expect(pm.environment.get(\"admin_token\")).to.not.be.empty;\r",
+											"        console.log(\"Admin token saved:\", pm.environment.get(\"admin_token\"));\r",
+											"        \r",
+											"        // Зберігаємо ім'я адміністратора\r",
+											"        if (jsonData.username) {\r",
+											"            pm.environment.set(\"current_admin_username\", jsonData.username);\r",
+											"        }\r",
+											"    } else {\r",
+											"        console.log(\"No access_token found in admin response\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/token",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /admin/queue/user/{queue_id} - Get user in queue",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/queue/user/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"queue",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/queue/remove_first - Remove first in queue",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "vaccine_name",
+											"value": "Pfizer"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/queue/remove_first",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"queue",
+										"remove_first"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/queue/clear - Clear queue",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/queue/clear",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"queue",
+										"clear"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/delete - Delete admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/delete",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/delete-user - Admin user deletion",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Success message present\", function() {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.include(\"deleted successfully\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username_to_delete",
+											"value": "{{user_username}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/delete-user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"delete-user"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Vaccine Endpoints",
+					"item": [
+						{
+							"name": "POST /admin/vaccines/add - Add vaccine",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "vaccine_name",
+											"value": "TestVaccine"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/vaccines/add",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"vaccines",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/vaccines/update - Update vaccine",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "vaccine_name",
+											"value": "TestVaccine"
+										},
+										{
+											"key": "new_name",
+											"value": "UpdatedTestVaccine"
+										},
+										{
+											"key": "is_active",
+											"value": "1"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/vaccines/update",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"vaccines",
+										"update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/vaccines/delete - Delete vaccine",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "vaccine_name",
+											"value": "UpdatedTestVaccine"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/vaccines/delete",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"vaccines",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/vaccines/list - List vaccines",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/vaccines/list",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"vaccines",
+										"list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Service Endpoints",
+					"item": [
+						{
+							"name": "POST /admin/server/maintenance - Toggle maintenance",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "maintenance",
+											"value": "true"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/server/maintenance",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"server",
+										"maintenance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /maintenance - Maintenance page",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/maintenance",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"maintenance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/security/rotate-key - Rotate security key",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/security/rotate-key",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"security",
+										"rotate-key"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Data Endpoints",
+					"item": [
+						{
+							"name": "GET /admin/data - Get admin data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/data",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"data"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /admin/data/all - Get all data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/data/all",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"data",
+										"all"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "scenarios",
+			"item": [
+				{
+					"name": "standart",
+					"item": [
+						{
+							"name": "GET / - Welcome page Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /register - Register page Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /login - Login page Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /register - User registration Copy",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{user_username}}"
+										},
+										{
+											"key": "email",
+											"value": "{{user_email}}"
+										},
+										{
+											"key": "password",
+											"value": "{{user_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /token - Get JWT token Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Save user token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    \r",
+											"    // Перевіряємо, чи є токен у відповіді\r",
+											"    if (jsonData.access_token) {\r",
+											"        pm.environment.set(\"user_token\", jsonData.access_token);\r",
+											"        pm.expect(pm.environment.get(\"user_token\")).to.not.be.empty;\r",
+											"        console.log(\"User token saved:\", pm.environment.get(\"user_token\"));\r",
+											"    } else {\r",
+											"        console.log(\"No access_token found in response\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{user_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{user_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/token",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /home - User home Copy",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/home",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"home"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /queue/position - Get queue position Copy",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/position",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"position"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /queue/add - Add to queue Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/add",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /queue/position - Get queue position Copy 2",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/position",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"position"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /queue/remove - Remove from queue Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/remove",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"remove"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /queue/position - Get queue position Copy 3",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/position",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"position"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /queue/add - Add to queue Copy 2",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/queue/add",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"queue",
+										"add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/register - Register admin Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/token - Get admin token Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Save admin token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    \r",
+											"    // Перевіряємо, чи є токен у відповіді\r",
+											"    if (jsonData.access_token) {\r",
+											"        pm.environment.set(\"admin_token\", jsonData.access_token);\r",
+											"        pm.expect(pm.environment.get(\"admin_token\")).to.not.be.empty;\r",
+											"        console.log(\"Admin token saved:\", pm.environment.get(\"admin_token\"));\r",
+											"        \r",
+											"        // Зберігаємо ім'я адміністратора\r",
+											"        if (jsonData.username) {\r",
+											"            pm.environment.set(\"current_admin_username\", jsonData.username);\r",
+											"        }\r",
+											"    } else {\r",
+											"        console.log(\"No access_token found in admin response\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/token",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /admin/queue/user/{queue_id} - Get user in queue Copy",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "Bearer {{user_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/queue/user/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"queue",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/queue/remove_first - Remove first in queue Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "vaccine_name",
+											"value": "Pfizer"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/queue/remove_first",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"queue",
+										"remove_first"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/queue/clear - Clear queue Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/queue/clear",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"queue",
+										"clear"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/delete-user - Admin user deletion Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Success message present\", function() {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.message).to.include(\"deleted successfully\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username_to_delete",
+											"value": "{{user_username}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/delete-user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"delete-user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/delete - Delete admin Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/delete",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Service",
+					"item": [
+						{
+							"name": "POST /admin/register - Register admin Copy",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /admin-login - Admin login page Copy",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/admin-login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin-login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/token - Get admin token Copy 2",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Save admin token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    \r",
+											"    // Перевіряємо, чи є токен у відповіді\r",
+											"    if (jsonData.access_token) {\r",
+											"        pm.environment.set(\"admin_token\", jsonData.access_token);\r",
+											"        pm.expect(pm.environment.get(\"admin_token\")).to.not.be.empty;\r",
+											"        console.log(\"Admin token saved:\", pm.environment.get(\"admin_token\"));\r",
+											"        \r",
+											"        // Зберігаємо ім'я адміністратора\r",
+											"        if (jsonData.username) {\r",
+											"            pm.environment.set(\"current_admin_username\", jsonData.username);\r",
+											"        }\r",
+											"    } else {\r",
+											"        console.log(\"No access_token found in admin response\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/token",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/server/maintenance - Enable maintenance Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "maintenance",
+											"value": "true"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/server/maintenance",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"server",
+										"maintenance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/vaccines/list - List vaccines Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/vaccines/list",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"vaccines",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/server/quarantine - Enable quarantine Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "maintenance",
+											"value": "true"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/server/quarantine",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"server",
+										"quarantine"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/server/maintenance - Disable maintenance Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "maintenance",
+											"value": "false"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/server/maintenance",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"server",
+										"maintenance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/security/rotate-key - Rotate security key Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/security/rotate-key",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"security",
+										"rotate-key"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/security/rotateadmins-key - Rotate admin key Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/security/rotateadmins-key",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"security",
+										"rotateadmins-key"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/vaccines/list - List vaccines again Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/vaccines/list",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"vaccines",
+										"list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/delete - Delete admin Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/delete",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "admin",
+					"item": [
+						{
+							"name": "POST /admin/register - Register admin Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/token - Get admin token Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Save admin token\", function () {\r",
+											"    var jsonData = pm.response.json();\r",
+											"    \r",
+											"    // Перевіряємо, чи є токен у відповіді\r",
+											"    if (jsonData.access_token) {\r",
+											"        pm.environment.set(\"admin_token\", jsonData.access_token);\r",
+											"        pm.expect(pm.environment.get(\"admin_token\")).to.not.be.empty;\r",
+											"        console.log(\"Admin token saved:\", pm.environment.get(\"admin_token\"));\r",
+											"        \r",
+											"        // Зберігаємо ім'я адміністратора\r",
+											"        if (jsonData.username) {\r",
+											"            pm.environment.set(\"current_admin_username\", jsonData.username);\r",
+											"        }\r",
+											"    } else {\r",
+											"        console.log(\"No access_token found in admin response\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/token",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "POST /admin/delete - Delete admin Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{admin_token}}"
+									},
+									{
+										"key": "X-Admin-Username",
+										"value": "{{current_admin_username}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_username}}"
+										},
+										{
+											"key": "admin_key",
+											"value": "{{admin_key}}"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/delete",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"admin",
+										"delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "user_username",
+			"value": "testuser"
+		},
+		{
+			"key": "user_email",
+			"value": "testuser@example.com"
+		},
+		{
+			"key": "user_password",
+			"value": "testpass123"
+		},
+		{
+			"key": "new_user_username",
+			"value": "newtestuser"
+		},
+		{
+			"key": "new_user_password",
+			"value": "newtestpass123"
+		},
+		{
+			"key": "admin_username",
+			"value": "adminuser"
+		},
+		{
+			"key": "admin_password",
+			"value": "adminpass123"
+		},
+		{
+			"key": "admin_key",
+			"value": "566039220b4dafdeade3f991f6e2b6c00ccefa2e4cd85f463683dbd4d5620a0a"
+		},
+		{
+			"key": "user_token",
+			"value": ""
+		},
+		{
+			"key": "admin_token",
+			"value": ""
+		},
+		{
+			"key": "current_admin_username",
+			"value": ""
+		}
+	]
+}

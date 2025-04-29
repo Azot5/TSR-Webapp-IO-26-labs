@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Зміна електронної пошти</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #4CAF50;
+      padding: 10px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .container {
+      width: 40%;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input {
+      width: 95%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+
+      .btn:hover {
+        background-color: #45a049;
+      }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Зміна електронної пошти</h1>
+  </header>
+
+  <div class="container">
+    <h2>Оновлення електронної пошти</h2>
+    <form id="updateEmailForm">
+      <input type="email" id="newEmail" name="newEmail" placeholder="Введіть нову електронну пошту" required>
+      <button type="submit" class="btn">Змінити</button>
+    </form>
+
+    <div id="errorMessage" class="error" style="display:none;"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 IO-26 Zinchenko A. Lab #1 Authentication System</p>
+  </footer>
+
+  <script>
+    document.getElementById('updateEmailForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const newEmail = document.getElementById('newEmail').value;
+      const token = localStorage.getItem('access_token');
+
+      if (!token) {
+        alert('Не знайдено токен, будь ласка, увійдіть знову.');
+        window.location.href = '/login';
+        return;
+      }
+
+      fetch('/update-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: new URLSearchParams({ 'new_email': newEmail }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.detail) {
+            throw new Error(data.detail);
+          }
+          alert(data.message);
+        })
+        .catch(error => {
+          document.getElementById('errorMessage').style.display = 'block';
+          document.getElementById('errorMessage').textContent = error.message;
+        });
+    });
+  </script>
+</body>
+</html>

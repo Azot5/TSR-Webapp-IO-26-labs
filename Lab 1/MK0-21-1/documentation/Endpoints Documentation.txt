@@ -1,0 +1,66 @@
+
+
+1. Основні ендпоїнти:
+
+GET / - Головна сторінка (welcome.html)
+GET /login - Сторінка входу (login.html)
+GET /register - Сторінка реєстрації (register.html)
+GET /healthcheck - Перевірка стану сервера
+
+2. Користувацькі ендпоїнти:
+
+POST /register - Реєстрація нового користувача
+POST /token - Отримання JWT токена для автентифікації
+GET /home - Домашня сторінка користувача
+GET /edit-account-home - Сторінка редагування акаунта
+GET /edit-account-username - Сторінка зміни імені користувача
+GET /edit-account-password - Сторінка зміни пароля
+GET /edit-account-email - Сторінка зміни email
+POST /update-username - Оновлення імені користувача
+POST /update-password - Оновлення пароля
+POST /update-email - Оновлення email
+POST /user/delete-account - видалення облікового запису самостійно
+
+3. Ендпоїнти черги:
+
+GET /queue/position - Отримання позиції в черзі
+POST /queue/add - Додавання до черги
+POST /queue/remove - Видалення з черги
+
+4. Адміністративні ендпоїнти:
+
+GET /admin-login - Сторінка входу адміністратора
+GET /admin-panel - Панель адміністратора
+POST /admin/register - Реєстрація нового адміністратора
+POST /admin/token - Отримання JWT токена для адміністратора
+GET /admin/queue/user/{queue_id} - Отримання інформації про користувача в черзі
+POST /admin/queue/remove_first - Видалення першого в черзі
+POST /admin/queue/clear - Очищення всієї черги
+POST /admin/delete - Видалення адміністратора
+GET /admin/data - Отримання даних про адміністраторів
+GET /admin/data/all - Отримання всіх даних з усіх таблиць
+POST /admin/delete-user - видалення користувача з правами адміністратора
+
+5. Ендпоїнти вакцин:
+
+POST /admin/vaccines/add - Додавання нової вакцини
+POST /admin/vaccines/update - Оновлення інформації про вакцину
+POST /admin/vaccines/delete - Видалення вакцини
+POST /admin/vaccines/list - Отримання списку вакцин
+
+6. Сервісні ендпоїнти:
+
+POST /admin/server/maintenance - Увімкнення/вимкнення режиму обслуговування
+GET /maintenance - Сторінка обслуговування
+POST /admin/security/rotate-key - Зміна секретного ключа
+
+7. Логування:
+
+(Всі дії автоматично логуються в таблицю action_logs)
+
+Додаткові відомості:
+
+- Всі POST-ендпоїнти вимагають відповідних даних у формі
+- Адміністративні ендпоїнти вимагають дійсного JWT токена
+- Для деяких адмін-функцій потрібен додатковий admin_key
+- У режимі обслуговування працює лише /healthcheck

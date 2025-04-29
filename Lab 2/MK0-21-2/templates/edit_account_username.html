@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Зміна ім'я користувача</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #4CAF50;
+      padding: 10px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .container {
+      width: 40%;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input {
+      width: 95%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+
+      .btn:hover {
+        background-color: #45a049;
+      }
+
+    .error {
+      color: red;
+      text-align: center;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Зміна імені користувача</h1>
+  </header>
+
+  <div class="container">
+    <h2>Оновлення імені</h2>
+    <form id="updateForm">
+      <input type="text" id="newUsername" name="newUsername" placeholder="Введіть нове ім'я" required>
+      <input type="password" id="password" name="password" placeholder="Введіть дійсний пароль" required>
+      <button type="submit" class="btn">Змінити</button>
+    </form>
+
+    <div id="errorMessage" class="error" style="display:none;"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 IO-26 Zinchenko A. Lab #1 Authentication System</p>
+  </footer>
+
+  <script>
+    document.getElementById('updateForm').addEventListener('submit', function (event) {
+      event.preventDefault(); 
+
+      const newUsername = document.getElementById('newUsername').value;
+      const password = document.getElementById('password').value;
+
+      if (confirm('Ви впевнені, що хочете змінити пароль?')) {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          alert('Не знайдено токен, будь ласка, увійдіть знову.');
+          window.location.href = '/login';
+          return;
+        }
+
+        fetch('/update-username', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: new URLSearchParams({
+            'new_username': newUsername,
+          }),
+        })
+          .then(response => {
+            if (response.status === 406) {
+              // Якщо код відповіді 406, вивести спеціальну помилку
+              throw new Error('Новий пароль співпадає зі старим');
+            } else if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Помилка при зміні імені.');
+            }
+          })
+          .then(data => {
+            alert(data.message);
+            // Видаляємо дані з LocalStorage
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('username');
+            // Переходимо до сторінки логіну
+            window.location.href = '/login';
+          })
+          .catch(error => {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorMessage').textContent = error.message;
+          });
+      }
+    });
+  </script>
+</body>
+</html>

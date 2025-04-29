@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Логін адміністратора - Система чергування</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f9;
+			color: #333;
+			margin: 0;
+			padding: 0;
+		}
+
+		header {
+			background-color: #d32f2f;
+			padding: 10px 20px;
+			text-align: center;
+			color: white;
+		}
+
+		.container {
+			width: 30%;
+			margin: 50px auto;
+			padding: 20px;
+			background-color: white;
+			border-radius: 10px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+
+		h2 {
+			text-align: center;
+			color: #d32f2f;
+		}
+
+		input {
+			width: 95%;
+			padding: 10px;
+			margin: 10px 0;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+		}
+
+		.btn {
+			width: 100%;
+			padding: 10px;
+			background-color: #d32f2f;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 1.1em;
+		}
+
+			.btn:hover {
+				background-color: #b71c1c;
+			}
+
+		.error {
+			color: red;
+			text-align: center;
+			font-size: 0.9em;
+			margin-top: 10px;
+		}
+
+		footer {
+			background-color: #333;
+			color: white;
+			text-align: center;
+			padding: 10px;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Панель адміністратора системи чергування</h1>
+	</header>
+
+	<div class="container">
+		<h2>Вхід для адміністратора</h2>
+		<form id="adminLoginForm">
+			<input type="text" id="username" name="username" placeholder="Ім'я адміністратора" required>
+			<input type="password" id="password" name="password" placeholder="Пароль" required>
+			<button type="submit" class="btn">Увійти</button>
+		</form>
+
+		<div id="errorMessage" class="error" style="display:none;"></div>
+	</div>
+
+	<footer>
+		<p>&copy; 2025 Система електронного чергування</p>
+	</footer>
+
+	<script>
+    document.getElementById('adminLoginForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/admin/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          'username': username,
+          'password': password
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Невірні облікові дані адміністратора');
+        }
+      })
+      .then(data => {
+        if (data.access_token) {
+          localStorage.setItem('admin_token', data.access_token);
+          localStorage.setItem('admin_username', username);
+          window.location.href = '/admin-panel';
+        }
+      })
+      .catch(error => {
+        document.getElementById('errorMessage').style.display = 'block';
+        document.getElementById('errorMessage').textContent = error.message;
+      });
+    });
+	</script>
+</body>
+</html>
