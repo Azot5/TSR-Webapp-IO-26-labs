@@ -1,0 +1,65 @@
+﻿{% extends "lab_5_app/base.html" %}
+
+{% block title %}Головна сторінка{% endblock %}
+
+{% block content %}
+<h2>Ласкаво просимо до лабораторної роботи №5</h2>
+<div class="welcome-content">
+  <p>Це головна сторінка вашого додатка. Використовуйте навігаційне меню для роботи з об'єктами.</p>
+  <div class="features">
+    <div class="feature-card">
+      <h3>Список об'єктів</h3>
+      <p>Переглядайте всі доступні об'єкти у системі</p>
+      <a href="{% url 'lab_5_app:entity_list' %}" class="btn btn-primary">Перейти до списку</a>
+    </div>
+    <div class="feature-card">
+      <h3>Створення об'єкта</h3>
+      <p>Додавайте нові об'єкти до системи</p>
+      <a href="{% url 'lab_5_app:entity_create' %}" class="btn btn-success">Створити об'єкт</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .welcome-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .feature-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+  }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-card h3 {
+      color: var(--secondary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      margin-bottom: 1rem;
+      color: #666;
+    }
+
+  @media (max-width: 768px) {
+    .features {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "lab_5_app/base.html" %}
+
+{% block title %}{% if entity %}Редагування {{ entity.name }}{% else %}Створення об'єкта{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if entity %}Редагування {{ entity.name }}{% else %}Створення нового об'єкта{% endif %}</h2>
+<form method="post">
+	{% csrf_token %}
+	<div>
+		<label for="name">Назва:</label>
+		<input type="text" id="name" name="name" value="{{ entity.name|default:'' }}" required>
+	</div>
+	<div>
+		<label for="description">Опис:</label>
+		<textarea id="description" name="description" required>{{ entity.description|default:'' }}</textarea>
+	</div>
+	<button type="submit" class="btn btn-success">Зберегти</button>
+</form>
+{% endblock %}

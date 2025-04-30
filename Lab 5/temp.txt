@@ -1,0 +1,2 @@
+python manage.py runserver
+C:\Users\Andriy\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\Scripts\django-admin.exe startproject lab 4 test

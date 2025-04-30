@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>{% block title %}Lab 5{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --primary-color: #4a6fa5;
+      --secondary-color: #166088;
+      --accent-color: #4fc3f7;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --danger-color: #dc3545;
+      --success-color: #28a745;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+      header h1 {
+        margin-bottom: 0.5rem;
+      }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+        nav a:hover {
+          background-color: var(--secondary-color);
+        }
+
+    main {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    h2 {
+      color: var(--secondary-color);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--accent-color);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+      }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+      .btn-danger:hover {
+        background-color: #c82333;
+      }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+      .btn-success:hover {
+        background-color: #218838;
+      }
+
+    form {
+      margin-top: 1rem;
+      max-width: 600px;
+    }
+
+      form div {
+        margin-bottom: 1rem;
+      }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    ul {
+      list-style: none;
+      margin: 1rem 0;
+    }
+
+      ul li {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+      }
+
+        ul li:hover {
+          transform: translateX(5px);
+        }
+
+        ul li a {
+          color: var(--primary-color);
+          text-decoration: none;
+          display: block;
+        }
+
+          ul li a:hover {
+            color: var(--secondary-color);
+          }
+
+    .actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+
+      nav {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      main {
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Лабораторна робота №5</h1>
+    <nav>
+      <a href="{% url 'lab_5_app:index' %}">Головна</a>
+      <a href="{% url 'lab_5_app:entity_list' %}">Список об'єктів</a>
+      <a href="{% url 'lab_5_app:entity_create' %}">Створити об'єкт</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

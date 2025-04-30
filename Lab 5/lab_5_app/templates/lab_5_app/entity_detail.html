@@ -1,0 +1,15 @@
+{% extends "lab_5_app/base.html" %}
+
+{% block title %}{{ entity.name }}{% endblock %}
+
+{% block content %}
+<h2>{{ entity.name }}</h2>
+<p>{{ entity.description }}</p>
+<div class="actions">
+	<a href="{% url 'lab_5_app:entity_update' pk=entity.id %}" class="btn btn-primary">Редагувати</a>
+	<form action="{% url 'lab_5_app:entity_delete' pk=entity.id %}" method="post" style="display: inline;">
+		{% csrf_token %}
+		<button type="submit" class="btn btn-danger">Видалити</button>
+	</form>
+</div>
+{% endblock %}

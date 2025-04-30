@@ -1,0 +1,17 @@
+{% extends "lab_5_app/base.html" %}
+
+{% block title %}Список об'єктів{% endblock %}
+
+{% block content %}
+<h2>Список об'єктів</h2>
+<ul>
+	{% for entity in entities %}
+	<li>
+		<a href="{% url 'lab_5_app:entity_detail' pk=entity.id %}">
+			{{ entity.name }}
+		</a>
+	</li>
+	{% endfor %}
+</ul>
+<a href="{% url 'lab_5_app:entity_create' %}" class="btn btn-primary">Додати новий об'єкт</a>
+{% endblock %}
