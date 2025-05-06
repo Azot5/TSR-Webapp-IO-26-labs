@@ -316,8 +316,8 @@ class UserEndpoints:
         return JSONResponse(content={"access_token": access_token})
 
     @app.get("/home", response_class=HTMLResponse)
-    async def home_page(request: Request, current_user: User = Depends(get_current_user)):
-        return templates.TemplateResponse("home.html", {"request": request, "username": current_user.username})
+    async def home_page(request: Request, username: str = "Guest"):
+        return templates.TemplateResponse("home.html", {"request": request, "username": username})
 
     @app.get("/edit-account-home", response_class=HTMLResponse)
     async def edit_account_home(request: Request, current_user: User = Depends(get_current_user)):
@@ -465,8 +465,8 @@ class AdminEndpoints:
         return templates.TemplateResponse("admin_login.html", {"request": request})
 
     @app.get("/admin-panel", response_class=HTMLResponse)
-    async def admin_panel_page(request: Request, current_admin: Admin = Depends(get_current_admin)):
-        return templates.TemplateResponse("admin_panel.html", {"request": request, "username": current_admin.username})
+    async def admin_panel_page(request: Request):
+        return templates.TemplateResponse("admin_panel.html", {"request": request})
 
     @app.post("/admin/register")
     async def register_admin(
